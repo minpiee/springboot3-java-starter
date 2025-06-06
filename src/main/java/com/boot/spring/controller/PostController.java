@@ -7,6 +7,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/posts")
 public class PostController {
@@ -34,5 +36,12 @@ public class PostController {
     PostResponseDTO postResponseDTO = postService.getPost(postId);
     model.addAttribute("postResponseDTO", postResponseDTO);
     return "post/detail";
+  }
+
+  @GetMapping
+  public String getAllPosts(Model model) {
+    List<PostResponseDTO> postResponseDTOList = postService.getAllPosts();
+    model.addAttribute("postResponseDTOList", postResponseDTOList);
+    return "post/list";
   }
 }
