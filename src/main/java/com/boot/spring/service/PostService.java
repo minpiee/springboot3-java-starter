@@ -1,8 +1,10 @@
 package com.boot.spring.service;
 
 import com.boot.spring.dto.PostRequestDTO;
+import com.boot.spring.dto.PostResponseDTO;
 import com.boot.spring.entity.Post;
 import com.boot.spring.repository.PostRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,5 +25,10 @@ public class PostService {
 
     postRepository.save(post);
     return post.getId();
+  }
+
+  public PostResponseDTO getPost(Long postId) {
+    Post post = postRepository.findById(postId).orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다. ID=" + postId));
+    return PostResponseDTO.toDTO(post);
   }
 }
