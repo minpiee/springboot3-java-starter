@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: spring-boot
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true  # HTML 폼에서 PUT, DELETE 등의 HTTP 메서드를 사용할 수 있도록 설정
+
+# 요청과 응답에서 UTF-8 인코딩을 사용하도록 설정
+server:
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
