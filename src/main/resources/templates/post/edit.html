@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" th:href="@{/edit.css}">
+    <title>블로그 글 수정</title>
+  </head>
+  <body>
+    <form th:object="${post}" th:action="@{/posts/{postId}(postId=*{id})}" method="post">
+      <input type="hidden" name="_method" value="patch">
+      <input type="text" th:field="*{title}" placeholder="제목" required />
+      <textarea rows="5" th:field="*{content}" placeholder="내용" required></textarea>
+      <div>
+        <button type="submit">수정</button>
+        <a th:href="@{/posts}">돌아가기</a>
+      </div>
+    </form>
+  </body>
+</html>

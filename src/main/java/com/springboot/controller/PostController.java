@@ -6,6 +6,7 @@ import com.springboot.service.PostService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
@@ -43,5 +44,27 @@ public class PostController {
     List<PostResponseDTO> postResponseDTOList = postService.getAllPosts();
     model.addAttribute("postResponseDTOList", postResponseDTOList);
     return "post/list";
+  }
+
+  @GetMapping("/{postId}/edit")
+  public ModelAndView showUpdateForm(@PathVariable Long postId, Model model) {
+    ModelAndView mav = new ModelAndView();
+
+    PostResponseDTO postResponseDTO = postService.getPost(postId);
+
+    if (postResponseDTO == null) {
+      mav.setViewName("redirect:/posts");
+      return mav;
+    }
+
+    return new ModelAndView("post/edit", "post", postResponseDTO);
+  }
+
+  @PatchMapping("/{postId}")
+  public String updatePost(@PathVariable Long postId, @ModelAttribute PostRequestDTO postRequestDTO) {
+    postRequestDTO.setId(postId);
+
+    Long id = postService.updatePost(postRequestDTO);
+    return "redirect:/posts/" + id;
   }
 }
