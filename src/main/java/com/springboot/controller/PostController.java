@@ -1,12 +1,11 @@
 package com.springboot.controller;
 
 import com.springboot.dto.PostRequestDTO;
+import com.springboot.dto.PostResponseDTO;
 import com.springboot.service.PostService;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/posts")
@@ -28,5 +27,12 @@ public class PostController {
   public String createPost(@ModelAttribute PostRequestDTO postRequestDTO) {
     Long id = postService.createPost(postRequestDTO);
     return "redirect:/posts/" + id;
+  }
+
+  @GetMapping("/{postId}")
+  public String getPost(@PathVariable Long postId, Model model) {
+    PostResponseDTO postResponseDTO = postService.getPost(postId);
+    model.addAttribute("postResponseDTO", postResponseDTO);
+    return "post/detail";
   }
 }

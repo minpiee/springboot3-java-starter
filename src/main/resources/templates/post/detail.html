@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>블로그 글 상세</title>
+    <link rel="stylesheet" th:href="@{/detail.css}" />
+  </head>
+  <body th:object="${postResponseDTO}">
+    <div>
+      <p th:text="*{title}"></p>
+      <p th:text="*{formattedUpdateAt}"></p>
+    </div>
+    <hr />
+    <div th:text="*{content}" style="white-space: pre-line"></div>
+    <hr />
+    <div>
+      <a th:href="@{/posts}">목록</a>
+      <a th:href="@{/posts/{postId}/edit(postId=*{id})}">수정</a>
+      <form th:action="@{/posts/{postId}(postId=*{id})}" method="post">
+        <input type="hidden" name="_method" value="delete">
+        <button type="submit">삭제</button>
+      </form>
+    </div>
+  </body>
+</html>
