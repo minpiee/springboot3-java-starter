@@ -62,4 +62,13 @@ public class PostService {
     // 자동으로 DB에 update 쿼리를 실행함 (JPA의 변경 감지 기능)
     return post.getId();
   }
+
+  @Transactional
+  public void deletePost(Long postId) {
+    // DB에 실제로 존재하는 값인지 먼저 확인
+    Post post = postRepository.findById(postId).orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다. ID=" + postId));
+
+    // 조회한 게시글을 삭제함
+    postRepository.delete(post);
+  }
 }
