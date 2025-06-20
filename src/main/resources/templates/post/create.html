@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>블로그 글 등록</title>
+    <link rel="stylesheet" th:href="@{/create.css}">
+  </head>
+  <body>
+    <form th:action="@{/posts}" method="post">
+      <input type="text" name="title" placeholder="제목" required />
+      <textarea name="content" rows="5" placeholder="내용" required></textarea>
+      <div>
+        <button type="submit">등록</button>
+        <a th:href="@{/posts}">돌아가기</a>
+      </div>
+    </form>
+  </body>
+</html>
