@@ -7,6 +7,7 @@
     <link rel="stylesheet" th:href="@{/detail.css}" />
   </head>
   <body th:object="${postResponseDTO}">
+    <input type="hidden" id="postId" th:value="*{id}">
     <div>
       <p th:text="*{title}"></p>
       <p th:text="*{formattedUpdateAt}"></p>
@@ -22,5 +23,113 @@
         <button type="submit">삭제</button>
       </form>
     </div>
+
+    <!-- 댓글 영역 -->
+    <div>
+      <div id="commentCount"></div>
+      <div id="commentList"></div>
+    </div>
+
+    <!-- 댓글 입력 영역 -->
+    <div>
+      <input type="text" id="nickname" placeholder="닉네임" />
+      <input type="text" id="comment" placeholder="댓글 입력" />
+      <button type="button" id="addBtn">댓글 쓰기</button>
+    </div>
+
+    <!-- 댓글 관련 스크립트 -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const postId = document.getElementById('postId').value;
+            const nicknameInput = document.getElementById('nickname');
+            const commentInput = document.getElementById('comment');
+            const addBtn = document.getElementById('addBtn');
+            const commentList = document.getElementById('commentList');
+            const commentCount = document.getElementById('commentCount');
+
+            // 서버에서 댓글 목록 가져와 화면에 표시하는 함수
+            const fetchAndRenderComments = async () => {
+                try {
+                    const response = await fetch('/comments/api/' + postId);
+
+                    if (!response.ok) {
+                        throw new Error(`댓글 불러오기 실패 (상태 코드: ${response.status})`);
+                    }
+
+                    const data = await response.json();
+
+                    // 댓글 개수 출력
+                    commentCount.innerHTML = `댓글 <b>${data.length}</b>개`;
+
+                    // 화면에 표시할 댓글을 임시로 저장할 fragment 생성
+                    const fragment = document.createDocumentFragment();
+
+                    // 댓글을 화면에 표시할 요소로 만들기
+                    data.forEach(({comment, nickname, formattedUpdateAt}, index) => {
+                        const p = document.createElement('p');
+
+                        const spanComment = document.createElement('span');
+                        spanComment.textContent = `${index + 1}. ${nickname} | ${comment}`;
+
+                        const spanDate = document.createElement('span');
+                        spanDate.textContent = formattedUpdateAt;
+
+                        p.appendChild(spanComment);
+                        p.appendChild(spanDate);
+                        fragment.appendChild(p);
+                    });
+
+                    // 기존에 있던 댓글 지우고 새로 렌더링
+                    commentList.innerHTML = '';
+                    commentList.appendChild(fragment);
+                } catch (error) {
+                    console.error(error);
+                    alert('댓글을 불러오는 중 문제가 발생했습니다.');
+                }
+            }
+
+            // 새로운 댓글을 서버에 등록하는 함수
+            const addComment = async () => {
+                const nickname = nicknameInput.value.trim();
+                const comment = commentInput.value.trim();
+
+                if (!nickname) {
+                    alert('닉네임을 입력해 주세요.');
+                    nicknameInput.focus();
+                    return;
+                }
+
+                if (!comment) {
+                    alert('댓글을 입력해 주세요.');
+                    commentInput.focus();
+                    return;
+                }
+
+                // 서버로 보낼 데이터 구성
+                const sendData = {postId, nickname, comment};
+
+                try {
+                    const response = await fetch('/comments/api/new', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json; charset=UTF-8'},
+                        body: JSON.stringify(sendData),
+                    });
+                    if (!response.ok) throw new Error(`댓글 등록 실패 (${response.status})`);
+
+                    // 입력 필드 초기화
+                    nicknameInput.value = '';
+                    commentInput.value = '';
+
+                    // 댓글 목록 다시 불러오기
+                    await fetchAndRenderComments();
+                } catch (error) {
+                    console.error(error);
+                    alert('댓글 등록 중 문제가 발생했습니다.');
+                }
+            }
+            addBtn.addEventListener('click', addComment);
+            fetchAndRenderComments();
+        });
+    </script>
   </body>
 </html>
